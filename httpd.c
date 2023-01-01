@@ -12,12 +12,11 @@
 #include <sys/wait.h>
 #include <stdlib.h>
 
-
 #define ISspace(x) isspace((int)(x))
 
 
 
-#define SERVER_STRING "Server: SongHao's http/0.1.0\r\n"//定义个人server名称
+#define SERVER_STRING "Server: wenyoufu's http/0.1.0\r\n"//定义个人server名称
 
 
 void *accept_request(void* client);
@@ -43,14 +42,14 @@ void *accept_request(void* from_client)
 	 char method[255];
 	 char url[255];
 	 char path[512];
+	 char tmp[512];
 	 size_t i, j;
 	 struct stat st; 
 	 int cgi = 0;     
 	 char *query_string = NULL;
-
 	 numchars = get_line(client, buf, sizeof(buf));
 	
-
+  sprintf(path, "/Users/wenyoufu/code/httpserver/MyPoorWebServer-master/");
 	i = 0; 
 	j = 0;
 	 while (!ISspace(buf[j]) && (i < sizeof(method) - 1))
@@ -102,9 +101,10 @@ void *accept_request(void* from_client)
 
 		 }
 
-	 sprintf(path, "httpdocs%s", url);
-
-
+	//  sprintf(path, "httpdocs%s", url);
+	 sprintf(tmp ,"httpdocs%s", url);
+	//  char tmp1[111] = "aaa";
+   strcat(path, tmp);
 	 if (path[strlen(path) - 1] == '/')
 	 {
 		 strcat(path, "test.html");
@@ -135,12 +135,14 @@ void *accept_request(void* from_client)
 		  //S_IXGRP:用户组具可执行权限
 		  //S_IXOTH:其他用户具可读取权限  
 			cgi = 1;
-
 	  if (!cgi)
 
 			serve_file(client, path);
-	  else
-	   execute_cgi(client, path, method, query_string);
+	  else {
+			unimplemented(client);
+	    // execute_cgi(client, path, method, query_string);
+		}
+
   
 	 }
 
@@ -384,10 +386,10 @@ void headers(int client, const char *filename)
 }
 
 
-//返回404错误页面，组装信息
 void not_found(int client)
 {
 	 char buf[1024];
+	 //返回404
 	 sprintf(buf, "HTTP/1.0 404 NOT FOUND\r\n");
 	 send(client, buf, strlen(buf), 0);
 	 sprintf(buf, SERVER_STRING);
@@ -409,7 +411,7 @@ void not_found(int client)
 }
 
 
-//如果不是CGI文件，也就是静态文件，直接读取文件返回给请求的http客户端即可
+//如果不是CGI文件，也就是静态文件，直接读取文件返回给请求的http客户端
 void serve_file(int client, const char *filename)
 {
 	 FILE *resource = NULL;
@@ -493,7 +495,7 @@ void unimplemented(int client)
 	 send(client, buf, strlen(buf), 0);
 }
 
-/*****************************主函数，也就是函数入口*****************************************/
+/**********************************************************************/
 
 int main(void)
 {

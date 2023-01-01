@@ -101,3 +101,9 @@ make
 https://www.cnblogs.com/qiyeboy/p/6296387.html
 
 https://www.jianshu.com/p/18cfd6019296
+
+
+
+学习笔记：
+1.httpsocket 服务端端口设置，bind (socket bind)
+2.启动新线程进行请求接收pthread_create accept_request
